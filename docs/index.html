@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nofocus — a psychological mirror, not a blocker</title>
+    <meta
+      name="description"
+      content="nofocus doesn't just block distracting sites — it holds up a mirror. See your attempts honestly, then earn your way through a moment of friction. 100% local, no tracking."
+    />
+    <meta name="theme-color" content="#f1efe8" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="nofocus — a psychological mirror, not a blocker" />
+    <meta
+      property="og:description"
+      content="See your distractions honestly. A stoic mirror for the sites that pull you in. 100% local, no tracking."
+    />
+    <meta property="og:url" content="https://nofoc.us" />
+    <meta property="og:image" content="https://nofoc.us/icon128.png" />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="icon" type="image/png" href="icon128.png" />
+    <link rel="apple-touch-icon" href="icon128.png" />
+    <link rel="canonical" href="https://nofoc.us/" />
+
+    <style>
+      :root {
+        --bg: #f1efe8;
+        --bg-center: #f7f5ef;
+        --ink: #1b1a14;
+        --muted: rgba(27, 26, 20, 0.5);
+        --faint: rgba(27, 26, 20, 0.12);
+        --hair: rgba(27, 26, 20, 0.08);
+        --card: rgba(255, 255, 255, 0.55);
+        --card-line: rgba(27, 26, 20, 0.06);
+        --accent-bg: #1b1a14;
+        --accent-fg: #f7f5ef;
+        --sans: -apple-system, "SF Pro Text", "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        --serif: "New York", "Iowan Old Style", "Palatino Linotype", Palatino,
+          Georgia, ui-serif, serif;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0d0d0b;
+          --bg-center: #17170f;
+          --ink: #ece8df;
+          --muted: rgba(236, 232, 223, 0.5);
+          --faint: rgba(236, 232, 223, 0.13);
+          --hair: rgba(236, 232, 223, 0.09);
+          --card: rgba(255, 255, 255, 0.045);
+          --card-line: rgba(236, 232, 223, 0.09);
+          --accent-bg: #26261d;
+          --accent-fg: #ece8df;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: radial-gradient(
+          120% 90% at 50% 0%,
+          var(--bg-center) 0%,
+          var(--bg) 60%
+        );
+        background-attachment: fixed;
+        color: var(--ink);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        line-height: 1.55;
+      }
+
+      .wrap {
+        max-width: 940px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* ---- Logo wordmark (no = sharp, focus = progressively blurred) ---- */
+
+      .logo {
+        font-family: var(--sans);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+        user-select: none;
+        display: inline-block;
+      }
+      .logo .fade span {
+        display: inline-block;
+      }
+      .logo .fade span:nth-child(1) { filter: blur(0.3px); opacity: 0.95; }
+      .logo .fade span:nth-child(2) { filter: blur(0.6px); opacity: 0.88; }
+      .logo .fade span:nth-child(3) { filter: blur(1px);   opacity: 0.8;  }
+      .logo .fade span:nth-child(4) { filter: blur(1.5px); opacity: 0.72; }
+      .logo .fade span:nth-child(5) { filter: blur(2px);   opacity: 0.64; }
+
+      /* ---- Top nav ---- */
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 26px 0 0;
+      }
+      .nav .logo {
+        font-size: 1.2rem;
+        opacity: 0.85;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        font-size: 0.9rem;
+      }
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      .nav-links a:hover {
+        color: var(--ink);
+      }
+      @media (max-width: 600px) {
+        .nav-links .nav-text { display: none; }
+      }
+
+      /* ---- Buttons ---- */
+
+      .btn {
+        font-family: var(--sans);
+        cursor: pointer;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.18s ease, opacity 0.2s ease, background 0.2s ease,
+          color 0.2s ease;
+      }
+      .btn-primary {
+        background: var(--ink);
+        color: var(--bg-center);
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        padding: 0.95rem 2.1rem;
+        border-radius: 999px;
+      }
+      .btn-primary:hover { transform: translateY(-1px); }
+      .btn-primary:active { transform: translateY(0); opacity: 0.9; }
+      .btn-ghost {
+        background: none;
+        color: var(--muted);
+        font-size: 0.95rem;
+        padding: 0.4rem 0.2rem;
+      }
+      .btn-ghost:hover { color: var(--ink); }
+
+      /* ---- Hero ---- */
+
+      .hero {
+        text-align: center;
+        padding: 11vh 0 7vh;
+      }
+      .eyebrow {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--muted);
+        margin-bottom: 1.6rem;
+      }
+      .hero h1 {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: clamp(2.6rem, 7.5vw, 5rem);
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+        max-width: 16ch;
+        margin: 0 auto;
+      }
+      .hero .lede {
+        margin: 1.8rem auto 0;
+        max-width: 46ch;
+        font-size: clamp(1.05rem, 2.4vw, 1.2rem);
+        color: var(--muted);
+      }
+      .cta-row {
+        margin-top: 2.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.6rem;
+        flex-wrap: wrap;
+      }
+      .cta-note {
+        margin-top: 1.3rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+        letter-spacing: 0.01em;
+      }
+
+      /* ---- Mirror preview (the product's signature screen) ---- */
+
+      .mirror {
+        margin: 2vh auto 0;
+        max-width: 560px;
+        background: radial-gradient(
+          120% 120% at 50% 28%,
+          var(--bg-center) 0%,
+          var(--bg) 72%
+        );
+        border: 1px solid var(--card-line);
+        border-radius: 26px;
+        padding: 4.5rem 2rem 3.5rem;
+        text-align: center;
+        box-shadow: 0 30px 80px -40px rgba(27, 26, 20, 0.45);
+      }
+      .mirror .count {
+        font-family: var(--serif);
+        font-size: clamp(4.5rem, 16vw, 7rem);
+        font-weight: 500;
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+      }
+      .mirror .count-sub {
+        margin-top: 1rem;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+      .mirror .domain {
+        margin-top: 0.3rem;
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+      .mirror .spitze {
+        margin-top: 2.6rem;
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: clamp(1.25rem, 3.2vw, 1.6rem);
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        line-height: 1.4;
+        min-height: 2.4em;
+        transition: opacity 0.6s ease;
+      }
+      .mirror .mirror-actions {
+        margin-top: 2.8rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      .mirror .mock-primary {
+        background: var(--ink);
+        color: var(--bg-center);
+        font-size: 0.95rem;
+        font-weight: 500;
+        padding: 0.85rem 2.5rem;
+        border-radius: 999px;
+      }
+      .mirror .mock-ghost {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      /* ---- Section scaffolding ---- */
+
+      section.block {
+        padding: 8vh 0;
+      }
+      .section-head {
+        text-align: center;
+        max-width: 40ch;
+        margin: 0 auto 4rem;
+      }
+      .section-head h2 {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: clamp(2rem, 5vw, 3rem);
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+      .section-head p {
+        margin-top: 1.1rem;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+
+      /* ---- How it works ---- */
+
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.4rem;
+      }
+      @media (max-width: 720px) {
+        .steps { grid-template-columns: 1fr; }
+      }
+      .step {
+        background: var(--card);
+        border: 1px solid var(--card-line);
+        border-radius: 20px;
+        padding: 2rem 1.8rem 2.2rem;
+      }
+      .step .num {
+        font-family: var(--serif);
+        font-size: 1.4rem;
+        font-weight: 500;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .step h3 {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .step p {
+        margin-top: 0.6rem;
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+
+      /* ---- Feature rows ---- */
+
+      .features {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.4rem;
+      }
+      @media (max-width: 720px) {
+        .features { grid-template-columns: 1fr; }
+      }
+      .feature {
+        background: var(--card);
+        border: 1px solid var(--card-line);
+        border-radius: 20px;
+        padding: 2rem 1.9rem;
+      }
+      .feature h3 {
+        font-size: 1.15rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .feature p {
+        margin-top: 0.6rem;
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+
+      /* ---- Privacy banner ---- */
+
+      .privacy {
+        background: var(--accent-bg);
+        color: var(--accent-fg);
+        border-radius: 26px;
+        padding: clamp(2.5rem, 6vw, 4rem);
+        text-align: center;
+      }
+      .privacy h2 {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: clamp(1.9rem, 4.6vw, 2.8rem);
+        letter-spacing: -0.02em;
+        line-height: 1.12;
+      }
+      .privacy p {
+        margin: 1.2rem auto 0;
+        max-width: 48ch;
+        color: rgba(247, 245, 239, 0.62);
+        font-size: 1.05rem;
+      }
+      @media (prefers-color-scheme: dark) {
+        .privacy p { color: rgba(236, 232, 223, 0.6); }
+      }
+
+      /* ---- Pricing ---- */
+
+      .plans {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.4rem;
+        max-width: 720px;
+        margin: 0 auto;
+      }
+      @media (max-width: 640px) {
+        .plans { grid-template-columns: 1fr; }
+      }
+      .plan {
+        border: 1px solid var(--card-line);
+        background: var(--card);
+        border-radius: 22px;
+        padding: 2.2rem 2rem;
+      }
+      .plan.pro {
+        background: var(--accent-bg);
+        color: var(--accent-fg);
+        border-color: var(--accent-bg);
+      }
+      .plan .plan-name {
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+      }
+      .plan.pro .plan-name { color: rgba(247, 245, 239, 0.6); }
+      .plan .price {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: 2.6rem;
+        letter-spacing: -0.02em;
+        margin-top: 0.7rem;
+        line-height: 1;
+      }
+      .plan .price small {
+        font-family: var(--sans);
+        font-size: 0.85rem;
+        font-weight: 400;
+        color: var(--muted);
+      }
+      .plan.pro .price small { color: rgba(247, 245, 239, 0.55); }
+      .plan ul {
+        list-style: none;
+        margin-top: 1.6rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+      .plan li {
+        font-size: 0.96rem;
+        padding-left: 1.5rem;
+        position: relative;
+        color: var(--ink);
+      }
+      .plan.pro li { color: var(--accent-fg); }
+      .plan li::before {
+        content: "—";
+        position: absolute;
+        left: 0;
+        color: var(--muted);
+      }
+      .plan.pro li::before { color: rgba(247, 245, 239, 0.5); }
+      .plan .plan-foot {
+        margin-top: 1.7rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+      .plan.pro .plan-foot { color: rgba(247, 245, 239, 0.55); }
+
+      /* ---- Closing CTA ---- */
+
+      .closing {
+        text-align: center;
+        padding: 10vh 0 6vh;
+      }
+      .closing h2 {
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 500;
+        font-size: clamp(1.8rem, 5vw, 2.8rem);
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        max-width: 20ch;
+        margin: 0 auto 2.4rem;
+      }
+
+      /* ---- Footer ---- */
+
+      footer {
+        border-top: 1px solid var(--hair);
+        padding: 3rem 0 4rem;
+      }
+      .foot-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .foot-row .logo { font-size: 1.05rem; opacity: 0.7; }
+      .foot-links {
+        display: flex;
+        gap: 1.6rem;
+        font-size: 0.88rem;
+      }
+      .foot-links a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      .foot-links a:hover { color: var(--ink); }
+      .copyright {
+        margin-top: 1.8rem;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <!-- Nav -->
+      <nav class="nav">
+        <span class="logo" aria-label="nofocus"
+          >no<span class="fade"
+            ><span>f</span><span>o</span><span>c</span><span>u</span><span>s</span></span
+          ></span
+        >
+        <div class="nav-links">
+          <a class="nav-text" href="#how">How it works</a>
+          <a class="nav-text" href="#pricing">Pricing</a>
+          <a class="btn-ghost" href="#get" style="color: var(--ink); font-weight: 500;"
+            >Get nofocus</a
+          >
+        </div>
+      </nav>
+
+      <!-- Hero -->
+      <header class="hero">
+        <p class="eyebrow">A psychological mirror, not a blocker</p>
+        <h1>You don't need another wall. You need to see yourself.</h1>
+        <p class="lede">
+          When you open a site that pulls you in, nofocus doesn't slam a door.
+          It quietly shows you what you're doing — and asks if you really mean
+          it.
+        </p>
+        <div class="cta-row">
+          <!-- TODO: replace href with the Chrome Web Store listing once published -->
+          <a id="get" class="btn btn-primary store-link" href="https://chromewebstore.google.com/">Add to Chrome</a>
+          <a class="btn btn-ghost" href="#how">See how it works →</a>
+        </div>
+        <p class="cta-note">Free · 100% local · No account, no tracking</p>
+      </header>
+
+      <!-- Mirror preview -->
+      <div class="mirror" aria-hidden="true">
+        <div class="count">7</div>
+        <p class="count-sub">your 7th attempt today</p>
+        <p class="domain">instagram.com</p>
+        <p class="spitze" id="rotating-line">
+          In ten years you won't remember a single one of these feeds.
+        </p>
+        <div class="mirror-actions">
+          <span class="btn mock-primary">close</span>
+          <span class="mock-ghost">open anyway</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <section class="block" id="how">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Friction, not force</h2>
+          <p>
+            Willpower runs out. A moment of honest reflection lasts longer than
+            a locked door.
+          </p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <div class="num">01</div>
+            <h3>You reach for the feed</h3>
+            <p>
+              Instead of the site, nofocus redirects you to a calm, stoic mirror
+              screen — no shame, no nagging.
+            </p>
+          </div>
+          <div class="step">
+            <div class="num">02</div>
+            <h3>You see the count</h3>
+            <p>
+              Your attempts today, the time since your last one, and a single
+              line meant to be read slowly. Then: close, or open anyway.
+            </p>
+          </div>
+          <div class="step">
+            <div class="num">03</div>
+            <h3>You earn the choice</h3>
+            <p>
+              Still want in? Type one honest sentence and wait out a short
+              countdown. The site unlocks — for a while, on purpose.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="block">
+      <div class="wrap">
+        <div class="features">
+          <div class="feature">
+            <h3>It mirrors, it doesn't moralize</h3>
+            <p>
+              Stoic, long-term lines — confronting but never unkind. “Attention
+              is the only thing that's truly yours. Are you giving it away?”
+            </p>
+          </div>
+          <div class="feature">
+            <h3>A friction hurdle, not a brick wall</h3>
+            <p>
+              A countdown ring plus a sentence to type. Enough resistance to
+              break the reflex, never enough to make you feel trapped.
+            </p>
+          </div>
+          <div class="feature">
+            <h3>You decide what's blocked</h3>
+            <p>
+              We ship a sensible default list, then get out of the way. Add or
+              remove any site. We're not your parents.
+            </p>
+          </div>
+          <div class="feature">
+            <h3>Quietly keeps score</h3>
+            <p>
+              A simple daily counter and log show your patterns honestly — so
+              the mirror has something true to reflect.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy -->
+    <section class="block">
+      <div class="wrap">
+        <div class="privacy">
+          <h2>Everything stays on your machine.</h2>
+          <p>
+            nofocus has no backend and no account. Your sites, your counts, your
+            choices live only in your browser's local storage. Nothing is sent
+            anywhere — because a tool that watches you isn't a tool you can
+            trust with your attention.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="block" id="pricing">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>One price, forever</h2>
+          <p>
+            No subscription. Charging you monthly to consume less would be the
+            wrong kind of incentive.
+          </p>
+        </div>
+        <div class="plans">
+          <div class="plan">
+            <div class="plan-name">Free</div>
+            <div class="price">€0</div>
+            <ul>
+              <li>The full psychological mirror</li>
+              <li>Friction hurdle &amp; unlock timer</li>
+              <li>Your own blocklist</li>
+              <li>Daily counter &amp; log</li>
+              <li>100% local</li>
+            </ul>
+            <p class="plan-foot">The whole core. No catch.</p>
+          </div>
+          <div class="plan pro">
+            <div class="plan-name">Pro · Lifetime</div>
+            <div class="price">one-time <small>· pay once</small></div>
+            <ul>
+              <li>Dark mode &amp; themes</li>
+              <li>Custom mirror sentences</li>
+              <li>Schedules &amp; nuclear mode</li>
+              <li>Subdomain exceptions</li>
+              <li>History &amp; insights</li>
+            </ul>
+            <p class="plan-foot">Buy it once, keep it for good.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Closing CTA -->
+    <section class="closing" id="get-real">
+      <div class="wrap">
+        <h2>The person you want to become would close this tab right now.</h2>
+        <!-- TODO: replace href with the Chrome Web Store listing once published -->
+        <a class="btn btn-primary store-link" href="https://chromewebstore.google.com/">Add nofocus to Chrome</a>
+        <p class="cta-note">Free · Chrome · 100% local</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="wrap">
+        <div class="foot-row">
+          <span class="logo" aria-label="nofocus"
+            >no<span class="fade"
+              ><span>f</span><span>o</span><span>c</span><span>u</span
+              ><span>s</span></span
+            ></span
+          >
+          <div class="foot-links">
+            <a href="#how">How it works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="mailto:hello@nofoc.us">Contact</a>
+          </div>
+        </div>
+        <p class="copyright">© 2026 nofoc.us · Built to give your attention back.</p>
+      </div>
+    </footer>
+
+    <script>
+      // Rotate the stoic line in the mirror preview — same voice as the extension.
+      (function () {
+        var LINES = [
+          "In ten years you won't remember a single one of these feeds.",
+          "You're looking for something here you will never find here.",
+          "Attention is the only thing that's truly yours. Are you giving it away?",
+          "The person you want to become would close this tab right now.",
+          "Boredom is where your best ideas come from. Don't run from it.",
+          "The time you lose here, you never get back.",
+          "Every click is a small vote for who you become.",
+          "What would you do right now if nothing could distract you?",
+          "Three minutes becomes fifty. You know this.",
+          "Your future self is watching.",
+        ];
+        var el = document.getElementById("rotating-line");
+        if (!el) return;
+        var i = 0;
+        setInterval(function () {
+          el.style.opacity = "0";
+          setTimeout(function () {
+            i = (i + 1) % LINES.length;
+            el.textContent = LINES[i];
+            el.style.opacity = "1";
+          }, 600);
+        }, 4200);
+      })();
+    </script>
+  </body>
+</html>
