@@ -4,11 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) with Consent Mode v2 — denied until the visitor accepts -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-36F7ET3RFY"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+      try {
+        if (localStorage.getItem('nofocus-consent') === 'granted') {
+          gtag('consent', 'update', { 'analytics_storage': 'granted' });
+        }
+      } catch (e) {}
       gtag('js', new Date());
       gtag('config', 'G-36F7ET3RFY');
     </script>
@@ -170,5 +182,6 @@
         © 2026 nofoc.us · operated by mindcom
       </footer>
     </div>
+    <script src="consent.js"></script>
   </body>
 </html>
